@@ -35,7 +35,7 @@ export default function MailboxSetupPage() {
 
     try {
       // Capitalize provider name for API: gmail -> Gmail, outlook -> Outlook
-      const capitalizedProvider = provider.charAt(0).toUpperCase() + provider.slice(1);
+      const capitalizedProvider = (provider.charAt(0).toUpperCase() + provider.slice(1)) as 'Gmail' | 'Outlook';
       const response = await mailboxApi.connect(capitalizedProvider);
       
       if (response.authorizationUrl) {
