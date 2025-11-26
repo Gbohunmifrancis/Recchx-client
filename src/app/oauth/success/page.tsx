@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Loader2, CheckCircle } from 'lucide-react';
 
-export default function OAuthSuccessPage() {
+function OAuthSuccessContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const provider = searchParams.get('provider');
@@ -49,5 +49,19 @@ export default function OAuthSuccessPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function OAuthSuccessPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen animated-gradient flex items-center justify-center p-4">
+        <div className="glass-card p-8 text-center space-y-4">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto text-purple-600" />
+        </div>
+      </div>
+    }>
+      <OAuthSuccessContent />
+    </Suspense>
   );
 }

@@ -529,8 +529,8 @@ export interface Pagination {
   hasPrevious?: boolean;
 }
 
-// Dashboard Stats
-export interface DashboardStats {
+// Campaign Dashboard Stats (for campaign/prospect tracking)
+export interface CampaignDashboardStats {
   totalSent: number;
   openRate: number;
   clickRate: number;
