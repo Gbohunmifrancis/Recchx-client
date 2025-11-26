@@ -239,13 +239,33 @@ export const mockUserCompanyMatches: UserCompanyMatch[] = [
 ];
 
 export const mockDashboardStats: DashboardStats = {
-  totalSent: 478,
-  openRate: 52.3,
-  clickRate: 18.7,
-  replies: 32,
-  activeCampaigns: 2,
-  totalProspects: 156,
-  unreadMessages: 8,
+  totalJobMatches: 156,
+  applicationsSubmitted: 32,
+  topMatchScore: 92,
+  mailboxConnected: true,
+  mailboxType: 'Gmail',
+  lastMailboxSync: new Date().toISOString(),
+  recentActivity: [
+    {
+      id: '1',
+      type: 'job_match',
+      title: 'New Job Match',
+      description: 'Senior Full Stack Developer at Tech Corp',
+      timestamp: new Date(Date.now() - 1000 * 60 * 30).toISOString(),
+    },
+    {
+      id: '2',
+      type: 'application',
+      title: 'Application Submitted',
+      description: 'Applied to Frontend Engineer at Startup Inc',
+      timestamp: new Date(Date.now() - 1000 * 60 * 120).toISOString(),
+    },
+  ],
+  weeklyStats: {
+    newMatches: 12,
+    applications: 5,
+    responses: 2,
+  },
 };
 
 export const mockMailboxMessages: MailboxMessage[] = [
