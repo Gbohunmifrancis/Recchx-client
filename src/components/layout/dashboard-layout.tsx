@@ -99,7 +99,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               <div className="glass-card p-3 flex items-center gap-3">
                 <div className="relative h-10 w-10 rounded-full ring-2 ring-white/50 overflow-hidden">
                   <Image
-                    src={mockUser.avatar}
+                    src={mockUser.avatar || 'https://ui-avatars.com/api/?name=User&background=0ea5e9&color=fff'}
                     alt={`${mockUser.firstName} ${mockUser.lastName}`}
                     fill
                     className="object-cover"
@@ -164,7 +164,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                   >
                     <div className="relative h-8 w-8 rounded-full ring-2 ring-white/50 overflow-hidden">
                       <Image
-                        src={mockUser.avatar}
+                        src={mockUser.avatar || 'https://ui-avatars.com/api/?name=User&background=0ea5e9&color=fff'}
                         alt={mockUser.firstName}
                         fill
                         className="object-cover"
