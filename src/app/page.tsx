@@ -5,6 +5,7 @@ import { ArrowRight, Sparkles, Zap, Target, BarChart3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { GlassCard } from '@/components/ui/glass-card';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const features = [
   {
@@ -137,11 +138,13 @@ export default function HomePage() {
           className="relative"
         >
           <GlassCard variant="strong" className="p-4 shadow-2xl">
-            <div className="aspect-video bg-gradient-to-br from-sky-100 to-blue-100 rounded-xl overflow-hidden">
-              <img
+            <div className="aspect-video bg-gradient-to-br from-sky-100 to-blue-100 rounded-xl overflow-hidden relative">
+              <Image
                 src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1200&h=675&fit=crop"
                 alt="Dashboard Preview"
-                className="w-full h-full object-cover opacity-80"
+                fill
+                className="object-cover opacity-80"
+                unoptimized
               />
             </div>
           </GlassCard>

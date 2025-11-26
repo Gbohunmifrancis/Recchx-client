@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Image from 'next/image';
 import {
   LayoutDashboard,
   Megaphone,
@@ -96,11 +97,15 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             {/* User Card */}
             <div className="mt-auto pt-6 border-t border-white/50">
               <div className="glass-card p-3 flex items-center gap-3">
-                <img
-                  src={mockUser.avatar}
-                  alt={`${mockUser.firstName} ${mockUser.lastName}`}
-                  className="h-10 w-10 rounded-full ring-2 ring-white/50"
-                />
+                <div className="relative h-10 w-10 rounded-full ring-2 ring-white/50 overflow-hidden">
+                  <Image
+                    src={mockUser.avatar}
+                    alt={`${mockUser.firstName} ${mockUser.lastName}`}
+                    fill
+                    className="object-cover"
+                    unoptimized
+                  />
+                </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-slate-700 truncate">
                     {mockUser.firstName} {mockUser.lastName}
@@ -157,11 +162,15 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                     onClick={() => setProfileOpen(!profileOpen)}
                     className="flex items-center gap-2 p-2 hover:bg-white/40 rounded-xl transition-colors"
                   >
-                    <img
-                      src={mockUser.avatar}
-                      alt={mockUser.firstName}
-                      className="h-8 w-8 rounded-full ring-2 ring-white/50"
-                    />
+                    <div className="relative h-8 w-8 rounded-full ring-2 ring-white/50 overflow-hidden">
+                      <Image
+                        src={mockUser.avatar}
+                        alt={mockUser.firstName}
+                        fill
+                        className="object-cover"
+                        unoptimized
+                      />
+                    </div>
                     <ChevronDown className="h-4 w-4 text-slate-600 hidden sm:block" />
                   </button>
 

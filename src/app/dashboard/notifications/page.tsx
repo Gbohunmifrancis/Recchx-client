@@ -125,7 +125,7 @@ export default function NotificationsPage() {
             <GlassCard className="p-12 text-center">
               <Bell className="h-16 w-16 text-slate-300 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-slate-800 mb-2">No notifications</h3>
-              <p className="text-slate-600">You're all caught up! Check back later for updates.</p>
+              <p className="text-slate-600">You&apos;re all caught up! Check back later for updates.</p>
             </GlassCard>
           </motion.div>
         ) : (

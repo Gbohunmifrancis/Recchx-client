@@ -183,7 +183,7 @@ export default function OnboardingPage() {
             Complete Your Profile
           </h1>
           <p className="text-sm md:text-base text-slate-600">
-            Let's get you set up to find your dream job
+            Let&apos;s get you set up to find your dream job
           </p>
         </div>
 
@@ -358,7 +358,7 @@ function Step1ResumeUpload({ data, updateData, setIsParsing, isParsing }: any) {
       <div className="space-y-6">
         <div className="text-center">
           <h2 className="text-xl md:text-2xl font-bold text-slate-800 mb-2">Quick Start</h2>
-          <p className="text-sm md:text-base text-slate-600">Choose how you'd like to build your profile</p>
+          <p className="text-sm md:text-base text-slate-600">Choose how you&apos;d like to build your profile</p>
         </div>
 
         <div className="grid md:grid-cols-2 gap-4">
@@ -403,7 +403,7 @@ function Step1ResumeUpload({ data, updateData, setIsParsing, isParsing }: any) {
       <div className="space-y-6">
         <div>
           <h2 className="text-xl md:text-2xl font-bold text-slate-800 mb-2">Upload Your Resume</h2>
-          <p className="text-sm md:text-base text-slate-600">We'll use AI to extract your information</p>
+          <p className="text-sm md:text-base text-slate-600">We&apos;ll use AI to extract your information</p>
         </div>
 
         <div
@@ -803,7 +803,7 @@ function Step3JobPreferences({ data, updateData }: any) {
           </div>
           <div className="text-sm text-slate-700">
             <p className="font-medium text-slate-800 mb-1">Almost done!</p>
-            <p>We'll match you with relevant job opportunities based on your preferences.</p>
+            <p>We&apos;ll match you with relevant job opportunities based on your preferences.</p>
           </div>
         </div>
       </div>
