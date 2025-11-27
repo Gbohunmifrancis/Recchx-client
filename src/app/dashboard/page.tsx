@@ -47,16 +47,12 @@ export default function DashboardPage() {
   const { data: profile, isLoading: profileLoading } = useProfile();
   const { data: notifications, isLoading: notificationsLoading } = useNotifications({ limit: 5 });
   
-  // Build search query from user profile
-  const searchQuery = profile?.desiredJobTitles?.join(' OR ') || undefined;
-  const searchLocation = profile?.preferredLocations?.[0] || profile?.address || undefined;
-  
-  const { data: jobSearch, isLoading: jobsLoading, error: jobsError } = useJobSearch({ 
-    query: searchQuery,
-    location: searchLocation,
-    page: 1, 
-    limit: 20
-  }, true); // Always fetch jobs
+  // Use job matches API based on user profile
+  const { data: jobMatches, isLoading: jobsLoading, error: jobsError } = useJobMatches({
+    page: 1,
+    limit: 20,
+    sortBy: 'matchScore'
+  });
   
   const handleLogout = async () => {
     await logout();
@@ -78,8 +74,9 @@ export default function DashboardPage() {
     return null;
   }
 
-  const jobs = jobSearch?.jobs || [];
+  const jobs = jobMatches?.jobs || [];
   const unreadNotifications = notifications?.notifications?.filter(n => !n.read).length || 0;
+  const totalJobMatches = jobs.length;
 
   return (
     <div className="min-h-screen bg-slate-50 flex">
@@ -94,7 +91,7 @@ export default function DashboardPage() {
                 {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
               </p>
               <h1 className="text-4xl font-bold text-slate-900">
-                Good {new Date().getHours() < 12 ? 'Morning' : new Date().getHours() < 18 ? 'Afternoon' : 'Evening'}, {user.firstName}!
+                Good {new Date().getHours() < 12 ? 'Morning' : new Date().getHours() < 18 ? 'Afternoon' : 'Evening'}, {user?.firstName || profile?.firstName || 'there'}!
               </h1>
               
               {/* Profile Summary */}
@@ -196,26 +193,28 @@ export default function DashboardPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow"
+                onClick={() => router.push('/dashboard/jobs')}
+                className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all cursor-pointer group"
               >
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <Target className="h-6 w-6 text-emerald-600" />
                   </div>
                   <span className="text-emerald-600 text-sm font-medium">↗ {stats?.topMatchScore || 0}%</span>
                 </div>
                 <p className="text-slate-600 text-sm mb-1">Job Matches</p>
-                <p className="text-3xl font-bold text-slate-900">{stats?.totalJobMatches || 0}</p>
+                <p className="text-3xl font-bold text-slate-900">{totalJobMatches}</p>
               </motion.div>
 
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow"
+                onClick={() => router.push('/dashboard/applications')}
+                className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all cursor-pointer group"
               >
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <Send className="h-6 w-6 text-blue-600" />
                   </div>
                   {stats?.weeklyStats?.applications && stats.weeklyStats.applications > 0 && (
@@ -230,10 +229,11 @@ export default function DashboardPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow"
+                onClick={() => router.push('/dashboard/mailbox')}
+                className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all cursor-pointer group"
               >
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center group-hover:scale-110 transition-transform">
                     {stats?.mailboxConnected ? (
                       <MailCheck className="h-6 w-6 text-purple-600" />
                     ) : (
@@ -251,10 +251,11 @@ export default function DashboardPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
-                className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow"
+                onClick={() => router.push('/dashboard/notifications')}
+                className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all cursor-pointer group"
               >
                 <div className="flex items-center justify-between mb-4">
-                  <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center group-hover:scale-110 transition-transform">
                     <Activity className="h-6 w-6 text-orange-600" />
                   </div>
                   <span className="text-orange-600 text-sm font-medium">events</span>

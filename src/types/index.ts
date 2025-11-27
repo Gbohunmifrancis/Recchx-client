@@ -539,3 +539,271 @@ export interface CampaignDashboardStats {
   totalProspects: number;
   unreadMessages: number;
 }
+
+// =====================================================
+// SAVED JOBS TYPES
+// =====================================================
+
+export interface SavedJob {
+  id: string;
+  jobId: string;
+  title: string;
+  company: string;
+  location: string;
+  jobType: string;
+  salaryMin?: number;
+  salaryMax?: number;
+  savedAt: string;
+  hasApplied: boolean;
+}
+
+export interface SavedJobsResponse {
+  savedJobs: SavedJob[];
+  pagination: Pagination;
+}
+
+// =====================================================
+// COMPANY TYPES
+// =====================================================
+
+export interface CompanyDetails {
+  id: string;
+  name: string;
+  domain: string;
+  industry: string;
+  size: string;
+  location: string;
+  description: string;
+  website: string;
+  linkedInUrl: string;
+  glassdoorRating?: number;
+  culture?: string[];
+}
+
+export interface CompanyNote {
+  id: string;
+  note: string;
+  tags?: string[];
+  createdAt: string;
+}
+
+export interface CompanyDetailsResponse {
+  company: CompanyDetails;
+  openPositions: number;
+  appliedPositions: number;
+  savedPositions: number;
+  notes: CompanyNote[];
+}
+
+export interface AddCompanyNoteRequest {
+  note: string;
+  tags?: string[];
+}
+
+export interface FollowedCompany {
+  id: string;
+  name: string;
+  industry: string;
+  followedAt: string;
+  newJobCount: number;
+}
+
+export interface FollowedCompaniesResponse {
+  companies: FollowedCompany[];
+  pagination: Pagination;
+}
+
+// =====================================================
+// INTERVIEW TYPES
+// =====================================================
+
+export interface Interview {
+  id: string;
+  applicationId: string;
+  jobTitle: string;
+  company: string;
+  scheduledDate: string;
+  interviewType: string;
+  location?: string;
+  meetingLink?: string;
+  interviewerName?: string;
+  status: string;
+  notes?: string;
+  duration?: number;
+  outcome?: string;
+}
+
+export interface ScheduleInterviewRequest {
+  scheduledDate: string;
+  interviewType: string;
+  location?: string;
+  meetingLink?: string;
+  interviewerName?: string;
+  notes?: string;
+  duration?: number;
+}
+
+export interface UpdateInterviewRequest {
+  scheduledDate?: string;
+  status?: string;
+  notes?: string;
+  outcome?: string;
+}
+
+export interface InterviewsResponse {
+  interviews: Interview[];
+  pagination: Pagination;
+}
+
+export interface InterviewParams {
+  status?: string;
+  fromDate?: string;
+  toDate?: string;
+  page?: number;
+  limit?: number;
+}
+
+// =====================================================
+// APPLICATION NOTE & ACTIVITY TYPES
+// =====================================================
+
+export interface ApplicationNote {
+  id: string;
+  note: string;
+  isPrivate: boolean;
+  createdAt: string;
+}
+
+export interface AddApplicationNoteRequest {
+  note: string;
+  isPrivate?: boolean;
+}
+
+export interface ApplicationActivity {
+  id: string;
+  type: string;
+  description: string;
+  date: string;
+  metadata?: Record<string, any>;
+}
+
+export interface ApplicationActivitiesResponse {
+  activities: ApplicationActivity[];
+}
+
+// =====================================================
+// ADMIN SESSION & ANALYTICS TYPES
+// =====================================================
+
+export interface IpInfo {
+  city: string;
+  region: string;
+  country: string;
+  countryName: string;
+  location: string;
+  organization: string;
+  timezone: string;
+}
+
+export interface UserSession {
+  id: string;
+  sessionId: string;
+  deviceInfo: string;
+  ipAddress: string;
+  userAgent: string;
+  createdAt: string;
+  lastActivityAt: string;
+  expiresAt: string;
+  isActive: boolean;
+  revokedAt?: string;
+  ipInfo?: IpInfo;
+  userId?: string;
+  userEmail?: string;
+  userName?: string;
+}
+
+export interface UserSessionsResponse {
+  sessions: UserSession[];
+}
+
+export interface AllSessionsResponse {
+  sessions: UserSession[];
+  pagination: Pagination;
+}
+
+export interface AdminCheckResponse {
+  userEmail: string;
+  userRole: string;
+  allClaims: Array<{
+    type: string;
+    value: string;
+  }>;
+  adminEmails: string[];
+  isAdmin: boolean;
+  message: string;
+}
+
+export interface TopSkill {
+  skill: string;
+  count: number;
+}
+
+export interface TopLocation {
+  location: string;
+  count: number;
+}
+
+export interface AnalyticsOverview {
+  totalUsers: number;
+  newUsersToday: number;
+  newUsersLast7Days: number;
+  newUsersLast30Days: number;
+  activeUsers: number;
+  totalApplications: number;
+  applicationsLast7Days: number;
+  applicationsLast30Days: number;
+  totalJobs: number;
+  activeJobs: number;
+  averageMatchScore: number;
+  topSkills: TopSkill[];
+  topLocations: TopLocation[];
+}
+
+export interface AdminUserDetails extends AdminUser {
+  name?: string;
+  signupDate?: string;
+  lastActive?: string;
+  location?: string;
+  device?: string;
+  ipAddress?: string;
+  mailboxConnected?: boolean;
+  mailboxType?: string;
+  mailboxEmail?: string;
+  onboardingCompleted?: boolean;
+  currentRole?: string;
+  yearsOfExperience?: number;
+}
+
+export interface AdminUsersParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  fromDate?: string;
+  toDate?: string;
+}
+
+export interface AllSessionsParams {
+  page?: number;
+  limit?: number;
+  activeOnly?: boolean;
+}
+
+// =====================================================
+// UPDATED PAGINATION TYPE
+// =====================================================
+
+export interface PaginationExtended extends Pagination {
+  totalCount?: number;
+  totalSessions?: number;
+  perPage?: number;
+}

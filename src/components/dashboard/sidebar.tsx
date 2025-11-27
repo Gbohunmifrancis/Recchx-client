@@ -81,7 +81,7 @@ export function DashboardSidebar({ user, onLogout }: SidebarProps) {
           x: isOpen ? 0 : '-100%',
         }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-        className="fixed left-0 top-0 h-full w-64 bg-slate-800/95 backdrop-blur-lg border-r border-slate-700 z-40 md:relative md:translate-x-0 flex flex-col shadow-2xl"
+        className="fixed md:sticky left-0 top-0 h-screen w-64 bg-slate-800/95 backdrop-blur-lg border-r border-slate-700 z-40 flex flex-col shadow-2xl"
       >
         {/* Logo/Brand */}
         <div className="p-6 border-b border-slate-700">

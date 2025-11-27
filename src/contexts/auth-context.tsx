@@ -113,6 +113,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem('accessToken', accessToken);
       localStorage.setItem('refreshToken', refreshToken);
       
+      // Mark as new user for onboarding flow
+      localStorage.setItem('isNewUser', 'true');
+      
       // Fetch full user profile after signup
       try {
         const fullProfile = await authAPI.getMe();
@@ -130,7 +133,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       // Small delay to ensure localStorage is synced before navigation
       await new Promise(resolve => setTimeout(resolve, 100));
-      router.push('/onboarding');
+      
+      // New users go to CV upload first
+      router.push('/onboarding/upload-cv');
     } catch (error) {
       throw error;
     }
@@ -144,6 +149,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } finally {
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
+      localStorage.removeItem('isNewUser');
       setUser(null);
       router.push('/auth');
     }
@@ -157,6 +163,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } finally {
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
+      localStorage.removeItem('isNewUser');
       setUser(null);
       router.push('/auth');
     }

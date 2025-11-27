@@ -196,6 +196,34 @@ export const jobsAPI = {
     const response = await apiClient.get('/api/jobs/search', { params });
     return response.data;
   },
+
+  /**
+   * Save a job for later
+   */
+  saveJob: async (jobId: string): Promise<{ message: string; savedAt: string }> => {
+    const response = await apiClient.post(`/api/jobs/${jobId}/save`);
+    return response.data;
+  },
+
+  /**
+   * Remove a job from saved jobs
+   */
+  unsaveJob: async (jobId: string): Promise<{ message: string }> => {
+    const response = await apiClient.delete(`/api/jobs/${jobId}/unsave`);
+    return response.data;
+  },
+
+  /**
+   * Get all saved jobs
+   */
+  getSavedJobs: async (params?: {
+    page?: number;
+    limit?: number;
+    sortBy?: string;
+  }): Promise<import('@/types').SavedJobsResponse> => {
+    const response = await apiClient.get('/api/jobs/saved', { params });
+    return response.data;
+  },
 };
 
 // =====================================================
@@ -235,6 +263,25 @@ export const applicationsAPI = {
    */
   withdraw: async (applicationId: string): Promise<{ message: string }> => {
     const response = await apiClient.delete(`/api/applications/${applicationId}`);
+    return response.data;
+  },
+
+  /**
+   * Add a note to an application
+   */
+  addNote: async (
+    applicationId: string,
+    data: import('@/types').AddApplicationNoteRequest
+  ): Promise<{ noteId: string; message: string; createdAt: string }> => {
+    const response = await apiClient.post(`/api/applications/${applicationId}/notes`, data);
+    return response.data;
+  },
+
+  /**
+   * Get application activity timeline
+   */
+  getActivity: async (applicationId: string): Promise<import('@/types').ApplicationActivitiesResponse> => {
+    const response = await apiClient.get(`/api/applications/${applicationId}/activity`);
     return response.data;
   },
 };
@@ -394,6 +441,102 @@ export const jobSourcesAPI = {
 };
 
 // =====================================================
+// COMPANY API
+// =====================================================
+
+export const companyAPI = {
+  /**
+   * Get company details by ID
+   */
+  getDetails: async (companyId: string): Promise<import('@/types').CompanyDetailsResponse> => {
+    const response = await apiClient.get(`/api/companies/${companyId}`);
+    return response.data;
+  },
+
+  /**
+   * Add a note about a company
+   */
+  addNote: async (
+    companyId: string,
+    data: import('@/types').AddCompanyNoteRequest
+  ): Promise<{ noteId: string; message: string }> => {
+    const response = await apiClient.post(`/api/companies/${companyId}/notes`, data);
+    return response.data;
+  },
+
+  /**
+   * Follow a company to get updates about new job postings
+   */
+  follow: async (companyId: string): Promise<{ message: string; followedAt: string }> => {
+    const response = await apiClient.post(`/api/companies/${companyId}/follow`);
+    return response.data;
+  },
+
+  /**
+   * Unfollow a company
+   */
+  unfollow: async (companyId: string): Promise<{ message: string }> => {
+    const response = await apiClient.delete(`/api/companies/${companyId}/follow`);
+    return response.data;
+  },
+
+  /**
+   * Get all followed companies
+   */
+  getFollowed: async (params?: {
+    page?: number;
+    limit?: number;
+  }): Promise<import('@/types').FollowedCompaniesResponse> => {
+    const response = await apiClient.get('/api/companies/followed', { params });
+    return response.data;
+  },
+};
+
+// =====================================================
+// INTERVIEW API
+// =====================================================
+
+export const interviewAPI = {
+  /**
+   * Schedule an interview for an application
+   */
+  schedule: async (
+    applicationId: string,
+    data: import('@/types').ScheduleInterviewRequest
+  ): Promise<{ interviewId: string; scheduledDate: string; message: string }> => {
+    const response = await apiClient.post(`/api/applications/${applicationId}/interviews`, data);
+    return response.data;
+  },
+
+  /**
+   * Get all interviews
+   */
+  getAll: async (params?: import('@/types').InterviewParams): Promise<import('@/types').InterviewsResponse> => {
+    const response = await apiClient.get('/api/interviews', { params });
+    return response.data;
+  },
+
+  /**
+   * Update interview details
+   */
+  update: async (
+    interviewId: string,
+    data: import('@/types').UpdateInterviewRequest
+  ): Promise<{ message: string }> => {
+    const response = await apiClient.put(`/api/interviews/${interviewId}`, data);
+    return response.data;
+  },
+
+  /**
+   * Delete an interview
+   */
+  delete: async (interviewId: string): Promise<{ message: string }> => {
+    const response = await apiClient.delete(`/api/interviews/${interviewId}`);
+    return response.data;
+  },
+};
+
+// =====================================================
 // CODELISTS API
 // =====================================================
 
@@ -455,23 +598,41 @@ export const codelistsAPI = {
 
 export const adminAPI = {
   /**
+   * Check if current user is an admin
+   */
+  checkAdminStatus: async (): Promise<import('@/types').AdminCheckResponse> => {
+    const response = await apiClient.get('/api/admin/check-admin');
+    return response.data;
+  },
+
+  /**
    * Get all users (Admin only)
    */
-  getUsers: async (params?: {
-    page?: number;
-    limit?: number;
-    search?: string;
-    fromDate?: string;
-    toDate?: string;
-  }): Promise<AdminUsersResponse> => {
+  getUsers: async (params?: import('@/types').AdminUsersParams): Promise<any> => {
     const response = await apiClient.get('/api/admin/users', { params });
+    return response.data;
+  },
+
+  /**
+   * Get user sessions by user ID (Admin only)
+   */
+  getUserSessions: async (userId: string): Promise<import('@/types').UserSessionsResponse> => {
+    const response = await apiClient.get(`/api/admin/users/${userId}/sessions`);
+    return response.data;
+  },
+
+  /**
+   * Get all active sessions (Admin only)
+   */
+  getAllSessions: async (params?: import('@/types').AllSessionsParams): Promise<import('@/types').AllSessionsResponse> => {
+    const response = await apiClient.get('/api/admin/sessions', { params });
     return response.data;
   },
 
   /**
    * Get analytics overview (Admin only)
    */
-  getAnalyticsOverview: async (): Promise<any> => {
+  getAnalyticsOverview: async (): Promise<import('@/types').AnalyticsOverview> => {
     const response = await apiClient.get('/api/admin/analytics/overview');
     return response.data;
   },
@@ -558,6 +719,8 @@ export const api = {
   mailbox: mailboxAPI,
   jobSources: jobSourcesAPI,
   codelists: codelistsAPI,
+  company: companyAPI,
+  interview: interviewAPI,
   admin: adminAPI,
 };
 
