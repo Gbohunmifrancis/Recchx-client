@@ -18,6 +18,7 @@ import type {
   ProfileData,
   ProfileResponse,
   ResumeUploadResponse,
+  ProfilePictureUploadResponse,
   // Jobs
   JobMatchParams,
   JobSearchParams,
@@ -131,15 +132,44 @@ export const profileAPI = {
    * Get user profile
    */
   getProfile: async (): Promise<ProfileResponse> => {
+    console.log('Fetching profile from /api/user/profile...');
     const response = await apiClient.get('/api/user/profile');
+    console.log('Profile response:', response.data);
     return response.data;
   },
 
   /**
    * Create or update user profile
+   * POST /api/user/profile
    */
   updateProfile: async (data: ProfileData): Promise<{ success?: boolean; profileId?: string; message?: string; profile?: ProfileResponse }> => {
-    const response = await apiClient.post('/api/user/profile', data);
+    // Clean up data before sending - remove any undefined values
+    const cleanData: ProfileData = {
+      fullName: data.fullName || undefined,
+      phoneNumber: data.phoneNumber || undefined,
+      address: data.address || undefined,
+      linkedInUrl: data.linkedInUrl || undefined,
+      githubUrl: data.githubUrl || undefined,
+      portfolioUrl: data.portfolioUrl || undefined,
+      professionalSummary: data.professionalSummary || undefined,
+      yearsOfExperience: data.yearsOfExperience !== undefined ? data.yearsOfExperience : undefined,
+      currentRole: data.currentRole || undefined,
+      skills: data.skills && data.skills.length > 0 ? data.skills : undefined,
+      desiredJobTitles: data.desiredJobTitles && data.desiredJobTitles.length > 0 ? data.desiredJobTitles : undefined,
+      preferredJobTypes: data.preferredJobTypes && data.preferredJobTypes.length > 0 ? data.preferredJobTypes : undefined,
+      preferredLocations: data.preferredLocations && data.preferredLocations.length > 0 ? data.preferredLocations : undefined,
+      expectedSalaryRange: data.expectedSalaryRange || undefined,
+      willingToRelocate: data.willingToRelocate,
+    };
+    
+    // Remove undefined keys
+    Object.keys(cleanData).forEach(key => {
+      if (cleanData[key as keyof ProfileData] === undefined) {
+        delete cleanData[key as keyof ProfileData];
+      }
+    });
+    
+    const response = await apiClient.post('/api/user/profile', cleanData);
     return response.data;
   },
 
@@ -151,6 +181,34 @@ export const profileAPI = {
     formData.append('file', file);
 
     const response = await apiClient.post('/api/user/resume', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  },
+
+  /**
+   * Upload profile picture
+   * POST /api/user/profile-picture
+   * Supports: JPG, PNG, GIF, WebP (max 5MB)
+   */
+  uploadProfilePicture: async (file: File): Promise<ProfilePictureUploadResponse> => {
+    // Validate file type
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      throw new Error('Invalid file type. Only JPG, PNG, GIF, and WebP images are allowed');
+    }
+
+    // Validate file size (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      throw new Error('File size exceeds 5MB limit');
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    const response = await apiClient.post('/api/user/profile-picture', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },

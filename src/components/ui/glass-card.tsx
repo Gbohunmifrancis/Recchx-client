@@ -11,8 +11,8 @@ export const GlassCard = React.forwardRef<HTMLDivElement, GlassCardProps>(
       <div
         ref={ref}
         className={cn(
-          variant === 'strong' ? 'glass-card-strong' : 'glass-card',
-          'transition-all duration-300 hover:shadow-glass-lg',
+          'bg-card rounded-xl border border-border',
+          'transition-all duration-300 hover:shadow-lg',
           className
         )}
         {...props}

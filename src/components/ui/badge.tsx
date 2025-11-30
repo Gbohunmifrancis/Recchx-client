@@ -10,19 +10,19 @@ export interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
 export const Badge = React.forwardRef<HTMLDivElement, BadgeProps>(
   ({ className, variant = 'default', status, children, ...props }, ref) => {
     const statusVariants: Record<CampaignStatus, string> = {
-      Draft: 'bg-slate-100 text-slate-700 border-slate-200',
-      Scheduled: 'bg-blue-100 text-blue-700 border-blue-200',
-      Sending: 'bg-yellow-100 text-yellow-700 border-yellow-200',
-      Sent: 'bg-green-100 text-green-700 border-green-200',
-      Paused: 'bg-orange-100 text-orange-700 border-orange-200',
+      Draft: 'bg-secondary text-secondary-foreground border-border',
+      Scheduled: 'bg-blue-500/20 text-blue-500 border-blue-500/30',
+      Sending: 'bg-yellow-500/20 text-yellow-500 border-yellow-500/30',
+      Sent: 'bg-primary/20 text-primary border-primary/30',
+      Paused: 'bg-orange-500/20 text-orange-500 border-orange-500/30',
     };
     
     const colorVariants = {
-      default: 'bg-slate-100 text-slate-700 border-slate-200',
-      success: 'bg-green-100 text-green-700 border-green-200',
-      warning: 'bg-yellow-100 text-yellow-700 border-yellow-200',
-      error: 'bg-red-100 text-red-700 border-red-200',
-      info: 'bg-blue-100 text-blue-700 border-blue-200',
+      default: 'bg-secondary text-secondary-foreground border-border',
+      success: 'bg-primary/20 text-primary border-primary/30',
+      warning: 'bg-yellow-500/20 text-yellow-500 border-yellow-500/30',
+      error: 'bg-destructive/20 text-destructive border-destructive/30',
+      info: 'bg-blue-500/20 text-blue-500 border-blue-500/30',
     };
 
     const variantClass = status ? statusVariants[status] : colorVariants[variant];

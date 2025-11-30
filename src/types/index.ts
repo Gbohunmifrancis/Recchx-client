@@ -172,8 +172,14 @@ export interface ProfileResponse extends ProfileData {
   email: string;
   firstName: string;
   lastName: string;
+  profilePictureUrl?: string;
   createdAt: string;
   updatedAt: string;
+}
+
+export interface ProfilePictureUploadResponse {
+  profilePictureUrl: string;
+  message: string;
 }
 
 export interface ResumeUploadResponse {
@@ -190,25 +196,31 @@ export interface Job {
   title: string;
   company: string;
   location: string;
-  jobType: string;
-  salaryRange?: string;
+  jobType?: string;
+  type?: string; // API also returns 'type' for job type
+  salary?: string; // API returns 'salary'
+  salaryRange?: string; // Frontend also uses 'salaryRange'
   salaryMin?: number;
   salaryMax?: number;
   currency?: string;
   postedDate: string;
   expiryDate?: string;
+  applicationDeadline?: string;
   description: string;
-  requirements: string[];
-  skills: string[];
+  requirements?: string[];
+  skills?: string[];
   benefits?: string[];
   contactEmail?: string;
   applicationUrl?: string;
   matchScore?: number;
   matchReasons?: string[];
-  isApplied: boolean;
+  isApplied?: boolean;
+  applied?: boolean; // API also returns 'applied'
   isSaved?: boolean;
   applicationStatus?: string | null;
   appliedDate?: string | null;
+  companyLogo?: string;
+  companyDescription?: string;
 }
 
 export interface JobMatchParams {

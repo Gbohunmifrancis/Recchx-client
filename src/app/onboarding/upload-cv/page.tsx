@@ -2,7 +2,9 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Upload, FileText, Loader2, ArrowRight } from 'lucide-react';
 import { profileAPI } from '@/lib/api';
+import { Button } from '@/components/ui/button';
 
 export default function UploadCVPage() {
   const router = useRouter();
@@ -86,68 +88,72 @@ export default function UploadCVPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-6">
-      <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Upload Your CV</h1>
-        <p className="text-gray-600 mb-8">
+    <div className="min-h-screen bg-background flex items-center justify-center p-6">
+      <div className="max-w-2xl w-full bg-card rounded-2xl shadow-xl border border-border p-8">
+        <h1 className="text-3xl font-bold text-foreground mb-2">Upload Your CV</h1>
+        <p className="text-muted-foreground mb-8">
           Let our AI analyze your CV and auto-fill your profile information
         </p>
         
-        <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors">
+        <div className="border-2 border-dashed border-border rounded-xl p-8 text-center hover:border-primary/50 transition-colors bg-secondary/30">
           <div className="mb-4">
-            <svg
-              className="mx-auto h-12 w-12 text-gray-400"
-              stroke="currentColor"
-              fill="none"
-              viewBox="0 0 48 48"
-              aria-hidden="true"
-            >
-              <path
-                d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                strokeWidth={2}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <Upload className="mx-auto h-12 w-12 text-muted-foreground" />
           </div>
 
           <input
             type="file"
             accept=".pdf,.doc,.docx"
             onChange={handleFileChange}
-            className="mb-4 text-sm text-gray-600 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+            className="mb-4 text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 file:cursor-pointer"
             disabled={uploading || parsing}
           />
           
           {file && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-4">
-              <p className="text-sm text-blue-800 font-medium">
-                📄 {file.name}
-              </p>
-              <p className="text-xs text-blue-600 mt-1">
+            <div className="bg-primary/10 border border-primary/20 rounded-xl p-3 mb-4">
+              <div className="flex items-center justify-center gap-2 text-foreground font-medium">
+                <FileText className="h-4 w-4" />
+                {file.name}
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
                 {(file.size / 1024).toFixed(2)} KB
               </p>
             </div>
           )}
 
           {error && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4">
-              <p className="text-sm text-red-800">{error}</p>
+            <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-3 mb-4">
+              <p className="text-sm text-destructive">{error}</p>
             </div>
           )}
           
-          <button
+          <Button
             onClick={handleUpload}
             disabled={!file || uploading || parsing}
-            className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+            variant="primary"
+            size="lg"
+            className="min-w-[160px]"
           >
-            {uploading ? 'Uploading...' : parsing ? 'Parsing CV...' : 'Upload CV'}
-          </button>
+            {uploading ? (
+              <>
+                <Loader2 className="h-5 w-5 animate-spin" />
+                Uploading...
+              </>
+            ) : parsing ? (
+              <>
+                <Loader2 className="h-5 w-5 animate-spin" />
+                Parsing CV...
+              </>
+            ) : (
+              <>
+                <Upload className="h-5 w-5" />
+                Upload CV
+              </>
+            )}
+          </Button>
 
           {parsing && (
             <div className="mt-6">
-              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600 mx-auto"></div>
-              <p className="text-sm text-gray-600 mt-3">
+              <p className="text-sm text-muted-foreground">
                 🤖 Analyzing your CV with AI... This may take a few seconds.
               </p>
             </div>
@@ -157,15 +163,16 @@ export default function UploadCVPage() {
         <div className="mt-8 text-center">
           <button
             onClick={() => router.push('/onboarding/profile')}
-            className="text-blue-600 hover:text-blue-700 font-medium underline"
+            className="text-primary hover:text-primary/80 font-medium inline-flex items-center gap-1 transition-colors"
             disabled={uploading || parsing}
           >
-            Skip and fill manually →
+            Skip and fill manually
+            <ArrowRight className="h-4 w-4" />
           </button>
         </div>
 
-        <div className="mt-8 pt-6 border-t border-gray-200">
-          <p className="text-xs text-gray-500 text-center">
+        <div className="mt-8 pt-6 border-t border-border">
+          <p className="text-xs text-muted-foreground text-center">
             Supported formats: PDF, DOC, DOCX • Max size: 5MB
           </p>
         </div>

@@ -3,7 +3,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Bell, CheckCircle2, Loader2, Mail, Briefcase, AlertCircle } from 'lucide-react';
-import { GlassCard } from '@/components/ui/glass-card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
@@ -40,13 +39,13 @@ export default function NotificationsPage() {
   const getNotificationIcon = (type: string) => {
     switch (type) {
       case 'application_status_change':
-        return <Briefcase className="h-5 w-5 text-blue-600" />;
+        return <Briefcase className="h-5 w-5 text-blue-500" />;
       case 'new_job_match':
-        return <Briefcase className="h-5 w-5 text-emerald-600" />;
+        return <Briefcase className="h-5 w-5 text-primary" />;
       case 'message':
-        return <Mail className="h-5 w-5 text-purple-600" />;
+        return <Mail className="h-5 w-5 text-purple-500" />;
       default:
-        return <Bell className="h-5 w-5 text-slate-600" />;
+        return <Bell className="h-5 w-5 text-muted-foreground" />;
     }
   };
 
@@ -71,14 +70,14 @@ export default function NotificationsPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-emerald-500" />
+      <div className="flex items-center justify-center min-h-screen bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen p-6 bg-gradient-to-br from-slate-50 via-blue-50 to-emerald-50">
+    <div className="min-h-screen p-6 bg-background">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header */}
         <motion.div
@@ -91,8 +90,8 @@ export default function NotificationsPage() {
               <Bell className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gradient">Notifications</h1>
-              <p className="text-slate-600 mt-1">
+              <h1 className="text-3xl font-bold text-foreground">Notifications</h1>
+              <p className="text-muted-foreground mt-1">
                 {unreadCount > 0 ? `${unreadCount} unread notification${unreadCount > 1 ? 's' : ''}` : 'All caught up!'}
               </p>
             </div>
@@ -122,11 +121,11 @@ export default function NotificationsPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
           >
-            <GlassCard className="p-12 text-center">
-              <Bell className="h-16 w-16 text-slate-300 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-slate-800 mb-2">No notifications</h3>
-              <p className="text-slate-600">You&apos;re all caught up! Check back later for updates.</p>
-            </GlassCard>
+            <div className="bg-card rounded-xl p-12 text-center border border-border">
+              <Bell className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-foreground mb-2">No notifications</h3>
+              <p className="text-muted-foreground">You&apos;re all caught up! Check back later for updates.</p>
+            </div>
           </motion.div>
         ) : (
           <div className="space-y-3">
@@ -137,11 +136,11 @@ export default function NotificationsPage() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.05 * index }}
               >
-                <GlassCard
-                  className={`p-4 cursor-pointer hover:shadow-lg transition-all ${
+                <div
+                  className={`bg-card rounded-xl p-4 border border-border cursor-pointer hover:shadow-lg transition-all ${
                     !notification.read && !notification.isRead
-                      ? 'bg-blue-50/80 border-l-4 border-l-blue-500'
-                      : 'bg-white/50'
+                      ? 'border-l-4 border-l-primary'
+                      : ''
                   }`}
                   onClick={() => {
                     if (!notification.read && !notification.isRead) {
@@ -150,33 +149,33 @@ export default function NotificationsPage() {
                   }}
                 >
                   <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center flex-shrink-0">
+                    <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center flex-shrink-0">
                       {getNotificationIcon(notification.type)}
                     </div>
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-3 mb-1">
-                        <h3 className="font-semibold text-slate-800">{notification.title}</h3>
+                        <h3 className="font-semibold text-foreground">{notification.title}</h3>
                         {!notification.read && !notification.isRead && (
-                          <div className="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0 mt-1.5" />
+                          <div className="w-2 h-2 rounded-full bg-primary flex-shrink-0 mt-1.5" />
                         )}
                       </div>
 
-                      <p className="text-sm text-slate-600 mb-2">{notification.message}</p>
+                      <p className="text-sm text-muted-foreground mb-2">{notification.message}</p>
 
                       <div className="flex items-center gap-3">
-                        <span className="text-xs text-slate-500">
+                        <span className="text-xs text-muted-foreground">
                           {formatDate(notification.createdAt)}
                         </span>
                         {notification.data && (
-                          <Badge className="text-xs bg-slate-100 text-slate-700">
+                          <Badge className="text-xs bg-secondary text-muted-foreground">
                             {notification.type.replace(/_/g, ' ')}
                           </Badge>
                         )}
                       </div>
                     </div>
                   </div>
-                </GlassCard>
+                </div>
               </motion.div>
             ))}
           </div>

@@ -80,8 +80,13 @@ export const queryKeys = {
 export function useProfile(options?: UseQueryOptions<ProfileResponse>) {
   return useQuery({
     queryKey: queryKeys.profile,
-    queryFn: () => api.profile.getProfile(),
+    queryFn: async () => {
+      const data = await api.profile.getProfile();
+      console.log('Profile fetched:', data);
+      return data;
+    },
     staleTime: 1000 * 60 * 5, // 5 minutes
+    refetchOnMount: true,
     ...options,
   });
 }
@@ -94,11 +99,14 @@ export function useUpdateProfile() {
 
   return useMutation({
     mutationFn: (data: ProfileData) => api.profile.updateProfile(data),
-    onSuccess: (data) => {
-      // Update cache
-      queryClient.setQueryData(queryKeys.profile, data.profile);
+    onSuccess: () => {
+      // Invalidate profile cache to force refetch with fresh data
+      queryClient.invalidateQueries({ queryKey: queryKeys.profile });
       // Invalidate dashboard to reflect profile changes
       queryClient.invalidateQueries({ queryKey: queryKeys.dashboard });
+    },
+    onError: (error) => {
+      console.error('Profile update failed:', error);
     },
   });
 }
@@ -115,6 +123,21 @@ export function useUploadResume() {
       // Invalidate documents list
       queryClient.invalidateQueries({ queryKey: queryKeys.documents });
       // Invalidate profile to update completeness
+      queryClient.invalidateQueries({ queryKey: queryKeys.profile });
+    },
+  });
+}
+
+/**
+ * Upload profile picture
+ */
+export function useUploadProfilePicture() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (file: File) => api.profile.uploadProfilePicture(file),
+    onSuccess: () => {
+      // Invalidate profile to update profile picture URL
       queryClient.invalidateQueries({ queryKey: queryKeys.profile });
     },
   });

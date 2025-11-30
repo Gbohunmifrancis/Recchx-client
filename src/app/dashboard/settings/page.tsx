@@ -94,14 +94,14 @@ export default function SettingsPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-emerald-500" />
+      <div className="flex items-center justify-center min-h-screen bg-background">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen p-6 bg-gradient-to-br from-slate-50 via-blue-50 to-emerald-50">
+    <div className="min-h-screen p-6 bg-background">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* Header */}
         <motion.div
@@ -110,14 +110,14 @@ export default function SettingsPage() {
           className="flex items-center justify-between"
         >
           <div>
-            <h1 className="text-3xl font-bold text-gradient">Settings</h1>
-            <p className="text-slate-600 mt-1">Manage your account preferences</p>
+            <h1 className="text-3xl font-bold text-foreground">Settings</h1>
+            <p className="text-muted-foreground mt-1">Manage your account preferences</p>
           </div>
           
           <Button
             onClick={handleSave}
             disabled={saveStatus === 'saving'}
-            className="gap-2 bg-gradient-to-r from-emerald-500 to-teal-500"
+            className="gap-2"
           >
             {saveStatus === 'saving' && <Loader2 className="h-4 w-4 animate-spin" />}
             {saveStatus === 'saved' && <CheckCircle2 className="h-4 w-4" />}
@@ -132,21 +132,21 @@ export default function SettingsPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
         >
-          <GlassCard className="p-6">
+          <div className="bg-card rounded-xl p-6 border border-border">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center">
-                <Bell className="h-5 w-5 text-white" />
+              <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
+                <Bell className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-slate-800">Notifications</h2>
-                <p className="text-sm text-slate-600">Manage how you receive updates</p>
+                <h2 className="text-xl font-bold text-foreground">Notifications</h2>
+                <p className="text-sm text-muted-foreground">Manage how you receive updates</p>
               </div>
             </div>
 
             <div className="space-y-6">
               {/* Email Notifications */}
               <div>
-                <h3 className="font-semibold text-slate-800 mb-3">Email Notifications</h3>
+                <h3 className="font-semibold text-foreground mb-3">Email Notifications</h3>
                 <div className="space-y-3">
                   <ToggleRow
                     label="New Job Matches"
@@ -171,7 +171,7 @@ export default function SettingsPage() {
 
               {/* Push Notifications */}
               <div>
-                <h3 className="font-semibold text-slate-800 mb-3">Push Notifications</h3>
+                <h3 className="font-semibold text-foreground mb-3">Push Notifications</h3>
                 <div className="space-y-3">
                   <ToggleRow
                     label="Job Matches"
@@ -188,7 +188,7 @@ export default function SettingsPage() {
                 </div>
               </div>
             </div>
-          </GlassCard>
+          </div>
         </motion.div>
 
         {/* Privacy Settings */}
@@ -197,14 +197,14 @@ export default function SettingsPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
         >
-          <GlassCard className="p-6">
+          <div className="bg-card rounded-xl p-6 border border-border">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-                <Lock className="h-5 w-5 text-white" />
+              <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
+                <Lock className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-slate-800">Privacy</h2>
-                <p className="text-sm text-slate-600">Control your profile visibility</p>
+                <h2 className="text-xl font-bold text-foreground">Privacy</h2>
+                <p className="text-sm text-muted-foreground">Control your profile visibility</p>
               </div>
             </div>
 
@@ -222,7 +222,7 @@ export default function SettingsPage() {
                 onChange={(checked) => updatePrivacySetting('showEmail', checked)}
               />
             </div>
-          </GlassCard>
+          </div>
         </motion.div>
 
         {/* Preferences */}
@@ -231,26 +231,26 @@ export default function SettingsPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <GlassCard className="p-6">
+          <div className="bg-card rounded-xl p-6 border border-border">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center">
-                <Globe className="h-5 w-5 text-white" />
+              <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
+                <Globe className="h-5 w-5 text-primary" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-slate-800">Preferences</h2>
-                <p className="text-sm text-slate-600">Customize your experience</p>
+                <h2 className="text-xl font-bold text-foreground">Preferences</h2>
+                <p className="text-sm text-muted-foreground">Customize your experience</p>
               </div>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Language
                 </label>
                 <select
                   value={localSettings.preferences?.language ?? 'en'}
                   onChange={(e) => updatePreference('language', e.target.value)}
-                  className="w-full px-4 py-2 rounded-lg border border-slate-200 bg-white/50 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full px-4 py-2 rounded-lg bg-secondary border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 >
                   <option value="en">English</option>
                   <option value="es">Spanish</option>
@@ -260,13 +260,13 @@ export default function SettingsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Timezone
                 </label>
                 <select
                   value={localSettings.preferences?.timezone ?? 'America/New_York'}
                   onChange={(e) => updatePreference('timezone', e.target.value)}
-                  className="w-full px-4 py-2 rounded-lg border border-slate-200 bg-white/50 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full px-4 py-2 rounded-lg bg-secondary border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 >
                   <option value="America/New_York">Eastern Time (ET)</option>
                   <option value="America/Chicago">Central Time (CT)</option>
@@ -279,13 +279,13 @@ export default function SettingsPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">
+                <label className="block text-sm font-medium text-foreground mb-2">
                   Email Frequency
                 </label>
                 <select
                   value={localSettings.preferences?.emailFrequency ?? 'daily'}
                   onChange={(e) => updatePreference('emailFrequency', e.target.value)}
-                  className="w-full px-4 py-2 rounded-lg border border-slate-200 bg-white/50 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  className="w-full px-4 py-2 rounded-lg bg-secondary border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 >
                   <option value="realtime">Real-time</option>
                   <option value="daily">Daily Digest</option>
@@ -294,7 +294,7 @@ export default function SettingsPage() {
                 </select>
               </div>
             </div>
-          </GlassCard>
+          </div>
         </motion.div>
       </div>
     </div>
@@ -311,20 +311,20 @@ interface ToggleRowProps {
 
 function ToggleRow({ label, description, checked, onChange }: ToggleRowProps) {
   return (
-    <div className="flex items-center justify-between p-4 rounded-lg bg-white/50 hover:bg-white/80 transition-colors">
+    <div className="flex items-center justify-between p-4 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors">
       <div className="flex-1">
-        <p className="font-medium text-slate-800">{label}</p>
-        <p className="text-sm text-slate-600">{description}</p>
+        <p className="font-medium text-foreground">{label}</p>
+        <p className="text-sm text-muted-foreground">{description}</p>
       </div>
       <button
         type="button"
         onClick={() => onChange(!checked)}
         className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-          checked ? 'bg-emerald-500' : 'bg-slate-300'
+          checked ? 'bg-primary' : 'bg-gray-400 dark:bg-gray-600'
         }`}
       >
         <span
-          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+          className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform ${
             checked ? 'translate-x-6' : 'translate-x-1'
           }`}
         />

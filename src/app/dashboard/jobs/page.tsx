@@ -48,21 +48,21 @@ export default function JobsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6">
+    <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-slate-900 mb-2">Job Search</h1>
-          <p className="text-slate-600">Find your next opportunity</p>
+          <h1 className="text-4xl font-bold text-foreground mb-2">Job Search</h1>
+          <p className="text-muted-foreground">Find your next opportunity</p>
         </div>
 
         {/* Search Bar */}
-        <GlassCard className="p-6 mb-6">
+        <div className="bg-card rounded-xl p-6 mb-6 border border-border">
           <form onSubmit={handleSearch} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="md:col-span-2">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                   <Input
                     type="text"
                     placeholder="Job title, keywords, or company..."
@@ -74,7 +74,7 @@ export default function JobsPage() {
               </div>
               <div>
                 <div className="relative">
-                  <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400" />
+                  <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                   <Input
                     type="text"
                     placeholder="Location..."
@@ -108,16 +108,16 @@ export default function JobsPage() {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
-                className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t"
+                className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-border"
               >
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                  <label className="block text-sm font-medium text-foreground mb-2">
                     Job Type
                   </label>
                   <select
                     value={jobType}
                     onChange={(e) => setJobType(e.target.value)}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                    className="w-full px-3 py-2 bg-secondary text-foreground border border-border rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
                   >
                     <option value="">All Types</option>
                     <option value="Full-time">Full-time</option>
@@ -128,7 +128,7 @@ export default function JobsPage() {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                  <label className="block text-sm font-medium text-foreground mb-2">
                     Min Salary
                   </label>
                   <Input
@@ -139,7 +139,7 @@ export default function JobsPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                  <label className="block text-sm font-medium text-foreground mb-2">
                     Max Salary
                   </label>
                   <Input
@@ -152,25 +152,25 @@ export default function JobsPage() {
               </motion.div>
             )}
           </form>
-        </GlassCard>
+        </div>
 
         {/* Results */}
         {isLoading ? (
           <div className="flex items-center justify-center py-20">
-            <Loader2 className="h-8 w-8 animate-spin text-emerald-600" />
+            <Loader2 className="h-8 w-8 animate-spin text-primary" />
           </div>
         ) : error ? (
-          <GlassCard className="p-12 text-center">
-            <div className="w-20 h-20 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-4">
-              <Briefcase className="h-10 w-10 text-red-400" />
+          <div className="bg-card rounded-xl p-12 text-center border border-border">
+            <div className="w-20 h-20 rounded-full bg-destructive/20 flex items-center justify-center mx-auto mb-4">
+              <Briefcase className="h-10 w-10 text-destructive" />
             </div>
-            <h3 className="text-xl font-semibold text-slate-800 mb-2">Failed to load jobs</h3>
-            <p className="text-slate-600 mb-4">{error?.message || 'Please try again later'}</p>
+            <h3 className="text-xl font-semibold text-foreground mb-2">Failed to load jobs</h3>
+            <p className="text-muted-foreground mb-4">{error?.message || 'Please try again later'}</p>
             <Button onClick={() => window.location.reload()}>Retry</Button>
-          </GlassCard>
+          </div>
         ) : jobs.length > 0 ? (
           <>
-            <div className="mb-4 text-sm text-slate-600">
+            <div className="mb-4 text-sm text-muted-foreground">
               Showing {jobs.length} of {pagination?.totalJobs || 0} jobs
             </div>
 
@@ -184,72 +184,114 @@ export default function JobsPage() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.05 * index }}
                 >
-                  <GlassCard 
-                    className="p-6 hover:shadow-lg transition-all cursor-pointer"
+                  <div 
+                    className="bg-card rounded-xl p-6 border border-border hover:border-primary/30 transition-all cursor-pointer"
                     onClick={() => {
                       router.push(`/dashboard/jobs/${jobId}`);
                     }}
                   >
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex-1">
-                        <h3 className="text-xl font-semibold text-slate-900 mb-2 hover:text-emerald-600 transition-colors">
-                          {job.title}
-                        </h3>
-                        <p className="text-slate-700 font-medium mb-3">{job.company}</p>
+                        <div className="flex items-start gap-3 mb-2">
+                          <h3 className="text-xl font-semibold text-foreground hover:text-primary transition-colors">
+                            {job.title}
+                          </h3>
+                          {/* Match Score Badge */}
+                          {job.matchScore && (
+                            <div className="flex items-center gap-2">
+                              <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                                job.matchScore >= 80 ? 'bg-emerald-500/20 text-emerald-500' :
+                                job.matchScore >= 60 ? 'bg-yellow-500/20 text-yellow-600' :
+                                'bg-muted text-muted-foreground'
+                              }`}>
+                                {job.matchScore}% Match
+                              </span>
+                              {/* Verified via Resume Badge */}
+                              {job.matchReasons?.some((reason: string) => reason.toLowerCase().includes('verified via resume')) && (
+                                <span className="px-2 py-1 rounded-full text-xs font-semibold bg-emerald-500 text-white flex items-center gap-1">
+                                  ✓ Verified
+                                </span>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                        <p className="text-muted-foreground font-medium mb-3">{job.company}</p>
                       </div>
                     </div>
 
-                    <div className="flex flex-wrap gap-4 text-sm text-slate-600 mb-4">
+                    <div className="flex flex-wrap gap-4 text-sm text-muted-foreground mb-4">
                       {job.location && (
                         <div className="flex items-center gap-1.5">
-                          <MapPin className="h-4 w-4 text-slate-400" />
+                          <MapPin className="h-4 w-4" />
                           <span>{job.location}</span>
                         </div>
                       )}
                       {(job.salaryRange || (job as any).salary) && (
                         <div className="flex items-center gap-1.5">
-                          <DollarSign className="h-4 w-4 text-slate-400" />
+                          <DollarSign className="h-4 w-4" />
                           <span>{job.salaryRange || (job as any).salary}</span>
                         </div>
                       )}
                       {(job.jobType || (job as any).type) && (
                         <div className="flex items-center gap-1.5">
-                          <Briefcase className="h-4 w-4 text-slate-400" />
+                          <Briefcase className="h-4 w-4" />
                           <span>{job.jobType || (job as any).type}</span>
                         </div>
                       )}
                       {job.postedDate && (
                         <div className="flex items-center gap-1.5">
-                          <Clock className="h-4 w-4 text-slate-400" />
+                          <Clock className="h-4 w-4" />
                           <span>{new Date(job.postedDate).toLocaleDateString()}</span>
                         </div>
                       )}
                     </div>
 
                     {job.description && (
-                      <p className="text-sm text-slate-600 mb-4 line-clamp-2">
+                      <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
                         {job.description}
                       </p>
                     )}
 
                     {job.skills && job.skills.length > 0 && (
-                      <div className="flex flex-wrap gap-2">
+                      <div className="flex flex-wrap gap-2 mb-4">
                         {job.skills.slice(0, 6).map((skill: string, idx: number) => (
                           <span
                             key={idx}
-                            className="px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full text-xs font-medium"
+                            className="px-3 py-1 bg-primary/20 text-primary rounded-full text-xs font-medium"
                           >
                             {skill}
                           </span>
                         ))}
                         {job.skills.length > 6 && (
-                          <span className="px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-xs">
+                          <span className="px-3 py-1 bg-secondary text-muted-foreground rounded-full text-xs">
                             +{job.skills.length - 6} more
                           </span>
                         )}
                       </div>
                     )}
-                  </GlassCard>
+
+                    {/* Match Reasons (show first 2) */}
+                    {job.matchReasons && job.matchReasons.length > 0 && (
+                      <div className="mt-3 pt-3 border-t border-border">
+                        <p className="text-xs text-muted-foreground mb-2 font-medium">Why this matches you:</p>
+                        <ul className="space-y-1">
+                          {job.matchReasons.slice(0, 2).map((reason: string, idx: number) => (
+                            <li key={idx} className="text-xs text-muted-foreground flex items-start gap-2">
+                              <span className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 flex-shrink-0" />
+                              {reason}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {/* Applied Badge */}
+                    {(job.isApplied || (job as any).applied) && (
+                      <div className="mt-3 inline-flex items-center gap-1 px-3 py-1 bg-blue-500/20 text-blue-500 rounded-full text-xs font-medium">
+                        ✓ Applied
+                      </div>
+                    )}
+                  </div>
                 </motion.div>
                 );
               })}
@@ -307,11 +349,11 @@ export default function JobsPage() {
             )}
           </>
         ) : (
-          <GlassCard className="p-12 text-center">
-            <Briefcase className="h-16 w-16 text-slate-300 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-slate-800 mb-2">No jobs found</h3>
-            <p className="text-slate-600">Try adjusting your search criteria</p>
-          </GlassCard>
+          <div className="bg-card rounded-xl p-12 text-center border border-border">
+            <Briefcase className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-foreground mb-2">No jobs found</h3>
+            <p className="text-muted-foreground">Try adjusting your search criteria</p>
+          </div>
         )}
       </div>
     </div>
