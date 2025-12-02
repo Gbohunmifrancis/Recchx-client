@@ -11,6 +11,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   login: (data: LoginData) => Promise<void>;
   signup: (data: SignUpData) => Promise<void>;
+  googleSignIn: (idToken: string) => Promise<void>;
   logout: () => Promise<void>;
   logoutAll: () => Promise<void>;
   refreshUser: () => Promise<void>;
@@ -141,6 +142,56 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const googleSignIn = async (idToken: string) => {
+    try {
+      const response = await authAPI.googleSignIn(idToken);
+      
+      const { accessToken, refreshToken, isNewUser } = response;
+      
+      if (!accessToken) {
+        throw new Error('No access token received from Google sign-in');
+      }
+      
+      localStorage.setItem('accessToken', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
+      
+      // Fetch full user profile after Google sign-in
+      let fullProfile: ProfileResponse | null = null;
+      try {
+        fullProfile = await authAPI.getMe();
+        setUser(fullProfile);
+      } catch (profileError) {
+        console.error('Failed to fetch profile after Google sign-in:', profileError);
+      }
+      
+      // Small delay to ensure localStorage is synced before navigation
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      // Route based on whether user is new or returning
+      if (isNewUser) {
+        localStorage.setItem('isNewUser', 'true');
+        // New Google users go to CV upload for onboarding
+        router.push('/onboarding/upload-cv');
+      } else {
+        // Check if profile is complete
+        const onboardingCompleted = localStorage.getItem('onboardingCompleted') === 'true';
+        const isProfileComplete = fullProfile && (
+          fullProfile.professionalSummary &&
+          fullProfile.skills && fullProfile.skills.length > 0 &&
+          fullProfile.desiredJobTitles && fullProfile.desiredJobTitles.length > 0
+        );
+        
+        if (onboardingCompleted || isProfileComplete) {
+          router.push('/dashboard');
+        } else {
+          router.push('/onboarding');
+        }
+      }
+    } catch (error) {
+      throw error;
+    }
+  };
+
   const logout = async () => {
     try {
       await authAPI.logout();
@@ -186,6 +237,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isAuthenticated,
         login,
         signup,
+        googleSignIn,
         logout,
         logoutAll,
         refreshUser,

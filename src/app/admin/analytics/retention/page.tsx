@@ -27,8 +27,8 @@ export default function AdminRetentionPage() {
   const [period, setPeriod] = useState<number>(30); // Days to analyze
 
   const { data, isLoading, error } = useQuery<RetentionAnalyticsResponse>({
-    queryKey: ['admin', 'analytics', 'retention', { period }],
-    queryFn: () => adminAPI.getRetentionAnalytics({ period }),
+    queryKey: ['admin', 'analytics', 'retention'],
+    queryFn: () => adminAPI.getRetentionAnalytics(),
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 

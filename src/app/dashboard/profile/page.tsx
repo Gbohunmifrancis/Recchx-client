@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { useAuth } from '@/contexts/auth-context';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,10 +23,14 @@ export default function ProfilePage() {
   
   const [isEditing, setIsEditing] = useState(false);
   const [picturePreview, setPicturePreview] = useState<string | null>(null);
+  const [uploadedPictureUrl, setUploadedPictureUrl] = useState<string | null>(null);
   const [pictureError, setPictureError] = useState<string | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const [formData, setFormData] = useState<ProfileData>({});
   const [error, setError] = useState<string | null>(null);
+
+  // Get the current profile picture URL (uploaded URL takes priority, then profile data)
+  const currentPictureUrl = uploadedPictureUrl || profileData?.profilePictureUrl;
 
   // Helper to get display name with fallbacks
   const getDisplayName = () => {
@@ -82,10 +87,15 @@ export default function ProfilePage() {
   const handleSave = async () => {
     setError(null);
     try {
-      await updateProfile.mutateAsync(formData);
+      console.log('Saving profile with data:', formData);
+      const result = await updateProfile.mutateAsync(formData);
+      console.log('Profile save result:', result);
+      // Force refetch profile data
+      await refetch();
       setIsEditing(false);
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to update profile');
+      console.error('Profile save error:', err);
+      setError(err.response?.data?.message || err.message || 'Failed to update profile');
     }
   };
 
@@ -115,7 +125,7 @@ export default function ProfilePage() {
       return;
     }
 
-    // Show preview
+    // Show preview immediately
     const reader = new FileReader();
     reader.onloadend = () => {
       setPicturePreview(reader.result as string);
@@ -125,9 +135,19 @@ export default function ProfilePage() {
     // Upload file
     setPictureError(null);
     try {
-      await uploadProfilePicture.mutateAsync(file);
-      setPicturePreview(null); // Clear preview after successful upload
+      console.log('Uploading profile picture...');
+      const result = await uploadProfilePicture.mutateAsync(file);
+      console.log('Profile picture upload result:', result);
+      
+      // Store the uploaded URL since backend might not persist it to profile
+      if (result.profilePictureUrl) {
+        setUploadedPictureUrl(result.profilePictureUrl);
+      }
+      
+      // Clear preview since we now have the actual URL
+      setPicturePreview(null);
     } catch (err: any) {
+      console.error('Profile picture upload error:', err);
       setPictureError(err.message || 'Failed to upload profile picture');
       setPicturePreview(null);
     }
@@ -239,11 +259,14 @@ export default function ProfilePage() {
             <div className="flex items-center gap-4 mb-6 pb-6 border-b border-border">
               {/* Profile Picture with Upload */}
               <div className="relative group">
-                {picturePreview || profileData?.profilePictureUrl ? (
-                  <img
-                    src={picturePreview || profileData?.profilePictureUrl}
+                {(picturePreview || currentPictureUrl) ? (
+                  <Image
+                    src={picturePreview || currentPictureUrl || ''}
                     alt={getDisplayName()}
+                    width={80}
+                    height={80}
                     className="w-20 h-20 rounded-full object-cover"
+                    unoptimized
                   />
                 ) : (
                   <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-emerald-500 flex items-center justify-center text-primary-foreground text-2xl font-bold">

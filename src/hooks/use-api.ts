@@ -99,7 +99,8 @@ export function useUpdateProfile() {
 
   return useMutation({
     mutationFn: (data: ProfileData) => api.profile.updateProfile(data),
-    onSuccess: () => {
+    onSuccess: (response) => {
+      console.log('Profile updated successfully:', response);
       // Invalidate profile cache to force refetch with fresh data
       queryClient.invalidateQueries({ queryKey: queryKeys.profile });
       // Invalidate dashboard to reflect profile changes
@@ -136,9 +137,31 @@ export function useUploadProfilePicture() {
 
   return useMutation({
     mutationFn: (file: File) => api.profile.uploadProfilePicture(file),
-    onSuccess: () => {
-      // Invalidate profile to update profile picture URL
+    onSuccess: (response) => {
+      console.log('Profile picture uploaded successfully:', response);
+      
+      // The backend returns the picture URL but might not save it to profile
+      // So we manually update the cache with the new URL
+      if (response.profilePictureUrl) {
+        // Update profile cache with new picture URL
+        queryClient.setQueryData(queryKeys.profile, (oldData: any) => {
+          if (oldData) {
+            return {
+              ...oldData,
+              profilePictureUrl: response.profilePictureUrl,
+            };
+          }
+          return oldData;
+        });
+      }
+      
+      // Also invalidate to trigger refetch (in case backend does save it)
       queryClient.invalidateQueries({ queryKey: queryKeys.profile });
+      // Invalidate dashboard to refresh sidebar avatar
+      queryClient.invalidateQueries({ queryKey: queryKeys.dashboard });
+    },
+    onError: (error) => {
+      console.error('Profile picture upload failed:', error);
     },
   });
 }

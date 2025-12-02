@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { 
   ArrowLeft,
@@ -99,10 +100,13 @@ export default function JobDetailPage() {
                 </div>
               </div>
               {job.companyLogo && (
-                <img 
+                <Image 
                   src={job.companyLogo} 
                   alt={`${job.company} logo`}
+                  width={64}
+                  height={64}
                   className="w-16 h-16 rounded-lg object-contain"
+                  unoptimized
                 />
               )}
             </div>

@@ -121,6 +121,20 @@ export const authAPI = {
     const response = await apiClient.post('/api/auth/reset-password', data);
     return response.data;
   },
+
+  /**
+   * Sign in with Google OAuth2
+   * POST /api/auth/google-signin
+   */
+  googleSignIn: async (idToken: string): Promise<{
+    accessToken: string;
+    refreshToken: string;
+    sessionId: string;
+    isNewUser: boolean;
+  }> => {
+    const response = await apiClient.post('/api/auth/google-signin', { idToken });
+    return response.data;
+  },
 };
 
 // =====================================================

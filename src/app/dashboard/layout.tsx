@@ -15,15 +15,19 @@ export default function DashboardLayout({
   const { user, logout, isLoading } = useAuth();
   const router = useRouter();
   
-  // Fetch profile data to get profilePictureUrl
+  // Fetch profile data to get profilePictureUrl and other profile fields
   const { data: profileData } = useProfile();
   
-  // Merge user data with profile data for sidebar
+  // Merge user data with profile data for sidebar - profile data takes priority
   const userWithProfile = React.useMemo(() => {
     if (!user) return null;
     return {
       ...user,
-      profilePictureUrl: profileData?.profilePictureUrl,
+      // Profile data takes priority for display
+      fullName: profileData?.fullName || user.fullName,
+      firstName: profileData?.firstName || user.firstName,
+      lastName: profileData?.lastName || user.lastName,
+      profilePictureUrl: profileData?.profilePictureUrl || user.profilePictureUrl,
     };
   }, [user, profileData]);
 

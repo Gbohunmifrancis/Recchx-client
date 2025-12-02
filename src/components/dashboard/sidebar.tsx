@@ -3,13 +3,15 @@
 import * as React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  LayoutDashboard, Briefcase, Send, Mail, FileText, 
+  LayoutDashboard, Briefcase, Send, FileText, 
   User, Settings, Menu, X, ChevronLeft, ChevronRight,
-  Sun, Moon, LogOut, Bell
+  Sun, Moon, LogOut, Bell, Shield
 } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useTheme } from '@/contexts/theme-context';
+import { adminAPI } from '@/lib/api';
 
 interface SidebarProps {
   user: any;
@@ -41,7 +43,6 @@ const menuItems = [
   { icon: LayoutDashboard, label: 'Dashboard', href: '/dashboard' },
   { icon: Briefcase, label: 'Jobs', href: '/dashboard/jobs' },
   { icon: Send, label: 'Applications', href: '/dashboard/applications' },
-  { icon: Mail, label: 'Mailbox', href: '/dashboard/mailbox' },
   { icon: FileText, label: 'Documents', href: '/dashboard/documents' },
   { icon: Bell, label: 'Notifications', href: '/dashboard/notifications' },
   { icon: User, label: 'Profile', href: '/dashboard/profile' },
@@ -51,8 +52,22 @@ const menuItems = [
 export function DashboardSidebar({ user, onLogout }: SidebarProps) {
   const [isOpen, setIsOpen] = React.useState(false);
   const [isCollapsed, setIsCollapsed] = React.useState(false);
+  const [isAdmin, setIsAdmin] = React.useState(false);
   const pathname = usePathname();
   const { theme, toggleTheme } = useTheme();
+
+  // Check if user is admin on mount
+  React.useEffect(() => {
+    const checkAdmin = async () => {
+      try {
+        const response = await adminAPI.checkAdminStatus();
+        setIsAdmin(response.isAdmin);
+      } catch {
+        setIsAdmin(false);
+      }
+    };
+    checkAdmin();
+  }, []);
 
   return (
     <>
@@ -119,10 +134,13 @@ export function DashboardSidebar({ user, onLogout }: SidebarProps) {
           <div className="px-4 py-3 border-b border-sidebar-border">
             <div className="flex items-center gap-3">
               {user?.profilePictureUrl ? (
-                <img
+                <Image
                   src={user.profilePictureUrl}
                   alt={getDisplayName(user)}
+                  width={36}
+                  height={36}
                   className="w-9 h-9 rounded-full object-cover"
+                  unoptimized
                 />
               ) : (
                 <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-semibold text-sm">
@@ -145,10 +163,13 @@ export function DashboardSidebar({ user, onLogout }: SidebarProps) {
         {isCollapsed && (
           <div className="py-3 flex justify-center border-b border-sidebar-border">
             {user?.profilePictureUrl ? (
-              <img
+              <Image
                 src={user.profilePictureUrl}
                 alt={getDisplayName(user)}
+                width={36}
+                height={36}
                 className="w-9 h-9 rounded-full object-cover"
+                unoptimized
               />
             ) : (
               <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-semibold text-sm">
@@ -190,6 +211,33 @@ export function DashboardSidebar({ user, onLogout }: SidebarProps) {
                 </Link>
               );
             })}
+
+            {/* Admin Link - Only show for admin users */}
+            {isAdmin && (
+              <Link
+                href="/admin"
+                onClick={() => setIsOpen(false)}
+                title={isCollapsed ? 'Admin Dashboard' : undefined}
+                className={`
+                  flex items-center gap-3 rounded-lg transition-all relative group mt-4 pt-4 border-t border-sidebar-border
+                  ${isCollapsed ? 'justify-center px-0 py-3' : 'px-3 py-2.5'}
+                  ${pathname.startsWith('/admin')
+                    ? 'bg-red-500 text-white'
+                    : 'text-red-500 hover:bg-red-500/10'
+                  }
+                `}
+              >
+                <Shield className="h-5 w-5 flex-shrink-0" />
+                {!isCollapsed && <span className="font-medium text-sm">Admin</span>}
+                
+                {/* Tooltip for collapsed state */}
+                {isCollapsed && (
+                  <div className="absolute left-full ml-2 px-2 py-1 bg-popover text-popover-foreground text-sm rounded-md opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all whitespace-nowrap z-50 border border-border shadow-md">
+                    Admin Dashboard
+                  </div>
+                )}
+              </Link>
+            )}
           </div>
         </nav>
 

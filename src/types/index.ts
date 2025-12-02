@@ -135,6 +135,17 @@ export interface AuthResponse {
   };
 }
 
+export interface GoogleSignInRequest {
+  idToken: string;
+}
+
+export interface GoogleSignInResponse {
+  accessToken: string;
+  refreshToken: string;
+  sessionId: string;
+  isNewUser: boolean;
+}
+
 export interface RefreshTokenRequest {
   refreshToken: string;
 }
@@ -537,6 +548,8 @@ export interface Pagination {
   totalApplications?: number;
   totalNotifications?: number;
   totalUsers?: number;
+  totalSessions?: number;
+  totalCount?: number;
   hasNext?: boolean;
   hasPrevious?: boolean;
 }

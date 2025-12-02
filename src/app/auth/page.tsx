@@ -5,12 +5,48 @@ import { motion } from 'framer-motion';
 import { Eye, EyeOff, Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';
 import { GoogleIcon } from '@/components/icons/brand-icons';
+import Script from 'next/script';
+
+// Google OAuth Client ID - should be moved to env variable in production
+const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || '';
+
+// Declare google global for TypeScript
+declare global {
+  interface Window {
+    google?: {
+      accounts: {
+        id: {
+          initialize: (config: {
+            client_id: string;
+            callback: (response: { credential: string }) => void;
+            auto_select?: boolean;
+            cancel_on_tap_outside?: boolean;
+          }) => void;
+          prompt: () => void;
+          renderButton: (
+            element: HTMLElement | null,
+            config: {
+              theme?: 'outline' | 'filled_blue' | 'filled_black';
+              size?: 'large' | 'medium' | 'small';
+              type?: 'standard' | 'icon';
+              text?: 'signin_with' | 'signup_with' | 'continue_with' | 'signin';
+              shape?: 'rectangular' | 'pill' | 'circle' | 'square';
+              logo_alignment?: 'left' | 'center';
+              width?: number;
+            }
+          ) => void;
+        };
+      };
+    };
+  }
+}
 
 export default function AuthPage() {
-  const { login, signup } = useAuth();
+  const { login, signup, googleSignIn } = useAuth();
   const [isLogin, setIsLogin] = React.useState(true);
   const [showPassword, setShowPassword] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = React.useState(false);
   const [apiError, setApiError] = React.useState('');
   const [formData, setFormData] = React.useState({
     firstName: '',
@@ -19,6 +55,100 @@ export default function AuthPage() {
     password: '',
   });
   const [errors, setErrors] = React.useState<Record<string, string>>({});
+  const googleButtonRef = React.useRef<HTMLDivElement>(null);
+
+  // Handle Google Sign-In callback
+  const handleGoogleCallback = React.useCallback(async (response: { credential: string }) => {
+    setIsGoogleLoading(true);
+    setApiError('');
+    
+    try {
+      await googleSignIn(response.credential);
+    } catch (error: any) {
+      let errorMessage = 'Google sign-in failed. Please try again.';
+      
+      if (error.response?.data) {
+        if (typeof error.response.data === 'string') {
+          errorMessage = error.response.data;
+        } else if (error.response.data.detail) {
+          errorMessage = error.response.data.detail;
+        } else if (error.response.data.message) {
+          errorMessage = error.response.data.message;
+        }
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
+      setApiError(errorMessage);
+    } finally {
+      setIsGoogleLoading(false);
+    }
+  }, [googleSignIn]);
+
+  // Initialize Google Sign-In
+  React.useEffect(() => {
+    const initGoogleSignIn = () => {
+      if (window.google && GOOGLE_CLIENT_ID) {
+        window.google.accounts.id.initialize({
+          client_id: GOOGLE_CLIENT_ID,
+          callback: handleGoogleCallback,
+          auto_select: false,
+          cancel_on_tap_outside: true,
+        });
+        
+        // Render the Google button
+        if (googleButtonRef.current) {
+          window.google.accounts.id.renderButton(googleButtonRef.current, {
+            theme: 'outline',
+            size: 'large',
+            type: 'standard',
+            text: 'continue_with',
+            shape: 'rectangular',
+            width: 400,
+          });
+        }
+      }
+    };
+
+    // Initialize after a small delay to ensure script is loaded
+    const timer = setTimeout(initGoogleSignIn, 500);
+    return () => clearTimeout(timer);
+  }, [handleGoogleCallback]);
+
+  // Store callback in ref for script onLoad
+  const callbackRef = React.useRef(handleGoogleCallback);
+  React.useEffect(() => {
+    callbackRef.current = handleGoogleCallback;
+  }, [handleGoogleCallback]);
+
+  // Initialize Google when script loads
+  const initializeGoogle = React.useCallback(() => {
+    if (window.google && GOOGLE_CLIENT_ID && googleButtonRef.current) {
+      window.google.accounts.id.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        callback: (response: { credential: string }) => callbackRef.current(response),
+        auto_select: false,
+        cancel_on_tap_outside: true,
+      });
+      window.google.accounts.id.renderButton(googleButtonRef.current, {
+        theme: 'outline',
+        size: 'large',
+        type: 'standard',
+        text: 'continue_with',
+        shape: 'rectangular',
+        width: 400,
+      });
+    }
+  }, []);
+
+  // Fallback manual Google Sign-In trigger
+  const handleGoogleSignInClick = () => {
+    if (window.google && GOOGLE_CLIENT_ID) {
+      window.google.accounts.id.prompt();
+    } else if (!GOOGLE_CLIENT_ID) {
+      setApiError('Google Sign-In is not configured. Please contact support.');
+    }
+  };
 
   const passwordRules = [
     { rule: 'At least 8 characters', test: (pwd: string) => pwd.length >= 8 },
@@ -368,18 +498,44 @@ export default function AuthPage() {
               <div className="flex-1 border-t border-slate-200"></div>
             </div>
 
-            {/* Google Sign In */}
-            <button
-              type="button"
-              className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl bg-white border border-slate-200 text-slate-700 font-medium hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-200 transition-all"
-              onClick={() => {
-                // TODO: Implement Google OAuth
-                console.log('Google sign in');
-              }}
-            >
-              <GoogleIcon className="h-5 w-5" />
-              Sign in with Google
-            </button>
+            {/* Google Sign In - Using Google Identity Services */}
+            {GOOGLE_CLIENT_ID ? (
+              <>
+                {/* Google's rendered button */}
+                <div 
+                  ref={googleButtonRef} 
+                  className="w-full flex justify-center"
+                />
+                
+                {/* Fallback custom button if Google button doesn't render */}
+                {isGoogleLoading && (
+                  <div className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl bg-white border border-slate-200 text-slate-700 font-medium">
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    Signing in with Google...
+                  </div>
+                )}
+              </>
+            ) : (
+              /* Custom button when no Google Client ID */
+              <button
+                type="button"
+                disabled={isGoogleLoading}
+                className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl bg-white border border-slate-200 text-slate-700 font-medium hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-slate-200 transition-all disabled:opacity-50"
+                onClick={handleGoogleSignInClick}
+              >
+                {isGoogleLoading ? (
+                  <>
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    Signing in with Google...
+                  </>
+                ) : (
+                  <>
+                    <GoogleIcon className="h-5 w-5" />
+                    Sign in with Google
+                  </>
+                )}
+              </button>
+            )}
           </form>
         </div>
 
@@ -395,6 +551,13 @@ export default function AuthPage() {
           </a>
         </p>
       </motion.div>
+
+      {/* Google Identity Services Script */}
+      <Script 
+        src="https://accounts.google.com/gsi/client" 
+        strategy="afterInteractive"
+        onLoad={initializeGoogle}
+      />
     </div>
   );
 }
